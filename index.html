@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Pricing & Revenue Calculator Pro</title>
+    <title>SaaS Calculator Pro - Ultimate Financial Modeling Suite</title>
+    <meta name="description" content="Professional SaaS metrics calculator with advanced analytics, scenario planning, and export capabilities. Calculate MRR, ARR, LTV, CAC, runway, and more.">
     <style>
         * {
             margin: 0;
@@ -11,78 +12,330 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #718096;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        }
+
+        /* License Modal - Enhanced */
+        .license-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+
+        .license-modal.hidden {
+            display: none;
+        }
+
+        .license-content {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .license-content h2 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .license-content p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .license-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Monaco', 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .license-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .license-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
             overflow: hidden;
         }
 
+        .license-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .license-button:hover::before {
+            left: 100%;
+        }
+
+        .license-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .license-error {
+            color: var(--danger);
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .demo-mode {
+            color: var(--gray);
+            font-size: 0.85em;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .demo-mode a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .demo-mode a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Main Container - Enhanced */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .container {
+            background: rgba(45, 55, 72, 0.97);
+            color: white;
+        }
+
+        /* Header - Enhanced */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             padding: 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             margin-bottom: 10px;
             font-weight: 700;
+            position: relative;
+            z-index: 1;
         }
 
         .header p {
             font-size: 1.2em;
-            opacity: 0.9;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
         }
 
+        /* Dark Mode Toggle */
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 5px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        body.dark-mode .tabs {
+            background: #2d3748;
+            border-color: #4a5568;
+        }
+
+        .tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        /* Content Area */
         .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
             padding: 40px;
         }
 
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
 
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Sections - Enhanced */
         .input-section {
             background: #f7fafc;
             padding: 30px;
             border-radius: 15px;
             border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
         }
 
-        .results-section {
-            background: #f7fafc;
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid #e2e8f0;
+        body.dark-mode .input-section {
+            background: #374151;
+            border-color: #4b5563;
         }
 
-        h2 {
-            color: #2d3748;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .input-section:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
         }
 
         .input-group {
-            margin-bottom: 25px;
+            position: relative;
         }
 
         label {
@@ -93,7 +346,11 @@
             font-size: 0.95em;
         }
 
-        input[type="number"], select {
+        body.dark-mode label {
+            color: #cbd5e0;
+        }
+
+        input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e2e8f0;
@@ -103,102 +360,297 @@
             background: white;
         }
 
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        body.dark-mode input[type="number"], 
+        body.dark-mode input[type="text"], 
+        body.dark-mode select {
+            background: #4b5563;
+            border-color: #6b7280;
+            color: white;
         }
 
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 25px;
+            right: 0;
+            background: #2d3748;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Sliders */
         .slider-container {
             margin-top: 10px;
         }
 
         input[type="range"] {
             width: 100%;
-            height: 6px;
+            height: 8px;
             -webkit-appearance: none;
             appearance: none;
             background: #e2e8f0;
             border-radius: 5px;
             outline: none;
+            transition: background 0.3s ease;
+        }
+
+        input[type="range"]:hover {
+            background: #cbd5e0;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #667eea;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             cursor: pointer;
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Metric Cards - Enhanced */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
         .metric-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 25px;
+            border-radius: 15px;
             border: 1px solid #e2e8f0;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .metric-card {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            transform: scaleX(1);
         }
 
         .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .metric-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
         }
 
         .metric-value {
             font-size: 2.2em;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary);
             margin: 10px 0;
+            font-variant-numeric: tabular-nums;
         }
 
         .metric-label {
-            color: #718096;
+            color: var(--gray);
             font-size: 0.9em;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        body.dark-mode .metric-label {
+            color: #9ca3af;
+        }
+
+        .metric-change {
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: var(--success);
+        }
+
+        .metric-change.negative {
+            color: var(--danger);
+        }
+
+        /* Charts - Enhanced */
         .chart-container {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
             border: 1px solid #e2e8f0;
-            height: 300px;
+            height: 400px;
             position: relative;
+            transition: all 0.3s ease;
         }
 
-        .growth-chart {
-            width: 100%;
-            height: 100%;
+        body.dark-mode .chart-container {
+            background: #374151;
+            border-color: #4b5563;
         }
 
-        .profit-indicator {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.3em;
             font-weight: 600;
-            margin-left: 10px;
+            color: #2d3748;
         }
 
-        .profit-positive {
-            background: #48bb78;
+        body.dark-mode .chart-title {
             color: white;
         }
 
-        .profit-negative {
-            background: #f56565;
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-control {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .chart-control {
+            background: #4b5563;
+            border-color: #6b7280;
             color: white;
+        }
+
+        .chart-control:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .chart-control.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Scenario Planning */
+        .scenario-container {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+        }
+
+        body.dark-mode .scenario-container {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .scenario-tab {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .scenario-tab {
+            background: #4b5563;
+            border-color: #6b7280;
+            color: white;
+        }
+
+        .scenario-tab:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .scenario-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Export Options */
+        .export-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
         }
 
         .export-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -206,170 +658,582 @@
             font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            width: 100%;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .export-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .formula-info {
-            background: #edf2f7;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.85em;
-            color: #4a5568;
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9em;
         }
 
-        .advanced-metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+        /* Advanced Features */
+        .feature-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 10px;
+            text-transform: uppercase;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .metric-card {
-            animation: fadeIn 0.5s ease;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .tabs {
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .input-grid, .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .license-content {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 SaaS Pricing & Revenue Calculator Pro</h1>
-            <p>Advanced Financial Modeling for Subscription Businesses</p>
-        </div>
-
-        <div class="content">
-            <div class="input-section">
-                <h2>📊 Business Parameters</h2>
-                
-                <div class="input-group">
-                    <label for="price">Monthly Subscription Price ($)</label>
-                    <input type="number" id="price" value="49" min="1" step="1">
-                    <div class="slider-container">
-                        <input type="range" id="priceSlider" min="10" max="500" value="49">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="customers">Starting Customers</label>
-                    <input type="number" id="customers" value="100" min="0" step="10">
-                </div>
-
-                <div class="input-group">
-                    <label for="growth">Monthly Growth Rate (%)</label>
-                    <input type="number" id="growth" value="10" min="-50" max="100" step="1">
-                    <div class="formula-info">
-                        📈 Industry average: 5-15% for early-stage SaaS
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="churn">Monthly Churn Rate (%)</label>
-                    <input type="number" id="churn" value="5" min="0" max="50" step="0.5">
-                    <div class="formula-info">
-                        📉 Good: <3% | Average: 5-7% | Poor: >10%
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="costs">Monthly Operating Costs ($)</label>
-                    <input type="number" id="costs" value="5000" min="0" step="100">
-                </div>
-
-                <div class="input-group">
-                    <label for="cac">Customer Acquisition Cost ($)</label>
-                    <input type="number" id="cac" value="150" min="0" step="10">
-                    <div class="formula-info">
-                        💡 Should be < 3x monthly price for healthy unit economics
-                    </div>
-                </div>
-
-                <button class="export-btn" onclick="exportResults()">📥 Export Financial Report</button>
-            </div>
-
-            <div class="results-section">
-                <h2>💰 Financial Projections</h2>
-                
-                <div class="metric-card">
-                    <div class="metric-label">Monthly Recurring Revenue (MRR)</div>
-                    <div class="metric-value" id="mrr">$0</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Annual Recurring Revenue (ARR)</div>
-                    <div class="metric-value" id="arr">$0</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">
-                        Monthly Profit
-                        <span id="profitIndicator" class="profit-indicator"></span>
-                    </div>
-                    <div class="metric-value" id="profit">$0</div>
-                </div>
-
-                <div class="advanced-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">LTV:CAC Ratio</div>
-                        <div class="metric-value" id="ltvcac">0</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Payback Period</div>
-                        <div class="metric-value" id="payback">0</div>
-                    </div>
-                </div>
-
-                <div class="advanced-metrics">
-                    <div class="metric-card">
-                        <div class="metric-label">Customer Lifetime Value</div>
-                        <div class="metric-value" id="ltv">$0</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Gross Margin</div>
-                        <div class="metric-value" id="margin">0%</div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="growthChart" class="growth-chart"></canvas>
-                    <div id="chartLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #718096; display: none;">Loading chart...</div>
-                </div>
+    <!-- License Key Modal -->
+    <div class="license-modal" id="licenseModal">
+        <div class="license-content">
+            <h2>🔐 Activate SaaS Calculator Pro</h2>
+            <p>Enter your license key to unlock all features and start analyzing your SaaS metrics with the most advanced calculator available.</p>
+            <input type="text" 
+                   class="license-input" 
+                   id="licenseKeyInput" 
+                   placeholder="SAAS-XXXX-XXXX-XXXX"
+                   maxlength="19"
+                   autocomplete="off">
+            <button class="license-button" onclick="validateLicense()">Activate Calculator</button>
+            <div class="license-error" id="licenseError"></div>
+            <div class="demo-mode">
+                <a href="https://gumroad.com/l/saas-calc-pro" target="_blank">Purchase License ($97)</a> | 
+                <a href="mailto:support@sascalcpro.com">Lost Your Key?</a>
             </div>
         </div>
     </div>
 
+    <!-- Main Application -->
+    <div class="container">
+        <div class="header">
+            <div class="mode-toggle" onclick="toggleDarkMode()">🌙</div>
+            <h1>SaaS Calculator Pro ✨</h1>
+            <p>Advanced Financial Modeling & Analytics Suite</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('basic')">📊 Basic Metrics</div>
+            <div class="tab" onclick="switchTab('advanced')">🚀 Advanced Analytics</div>
+            <div class="tab" onclick="switchTab('scenario')">🔮 Scenario Planning</div>
+            <div class="tab" onclick="switchTab('forecast')">📈 Forecasting</div>
+            <div class="tab" onclick="switchTab('reports')">📑 Reports</div>
+        </div>
+
+        <div class="content">
+            <!-- Basic Metrics Tab -->
+            <div id="basic-tab" class="tab-content active">
+                <div class="input-section">
+                    <h2>Core Business Parameters</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="price">Monthly Subscription Price ($)</label>
+                            <div class="tooltip" data-tip="Average revenue per user per month">?</div>
+                            <input type="number" id="price" value="99" min="1" step="1">
+                            <div class="slider-container">
+                                <input type="range" id="priceSlider" min="10" max="1000" value="99">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="customers">Current Customers</label>
+                            <input type="number" id="customers" value="250" min="0" step="10">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="growth">Monthly Growth Rate (%)</label>
+                            <input type="number" id="growth" value="15" min="-50" max="100" step="1">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="churn">Monthly Churn Rate (%)</label>
+                            <input type="number" id="churn" value="5" min="0" max="50" step="0.5">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="costs">Monthly Operating Costs ($)</label>
+                            <input type="number" id="costs" value="15000" min="0" step="100">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="cac">Customer Acquisition Cost ($)</label>
+                            <input type="number" id="cac" value="300" min="0" step="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">💰</div>
+                        <div class="metric-label">Monthly Recurring Revenue</div>
+                        <div class="metric-value" id="mrr">$0</div>
+                        <div class="metric-change positive" id="mrrChange">+0%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">📈</div>
+                        <div class="metric-label">Annual Recurring Revenue</div>
+                        <div class="metric-value" id="arr">$0</div>
+                        <div class="metric-change positive" id="arrChange">+0%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">💵</div>
+                        <div class="metric-label">Monthly Profit</div>
+                        <div class="metric-value" id="profit">$0</div>
+                        <div class="metric-change" id="profitChange">0%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">👤</div>
+                        <div class="metric-label">Customer Lifetime Value</div>
+                        <div class="metric-value" id="ltv">$0</div>
+                        <div class="metric-change" id="ltvChange">0 months</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <div class="metric-label">LTV:CAC Ratio</div>
+                        <div class="metric-value" id="ltvcac">0x</div>
+                        <div class="metric-change" id="ltvcacStatus">Target: >3x</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⏱️</div>
+                        <div class="metric-label">CAC Payback Period</div>
+                        <div class="metric-value" id="payback">0</div>
+                        <div class="metric-change" id="paybackStatus">months</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">12-Month Revenue Projection</h3>
+                        <div class="chart-controls">
+                            <button class="chart-control active" onclick="updateChart('revenue')">Revenue</button>
+                            <button class="chart-control" onclick="updateChart('customers')">Customers</button>
+                            <button class="chart-control" onclick="updateChart('profit')">Profit</button>
+                        </div>
+                    </div>
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Advanced Analytics Tab -->
+            <div id="advanced-tab" class="tab-content">
+                <div class="input-section">
+                    <h2>Advanced Metrics <span class="feature-badge">PRO</span></h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="expansion">Monthly Expansion Revenue (%)</label>
+                            <input type="number" id="expansion" value="2" min="0" max="50" step="0.5">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="contractLength">Average Contract Length (months)</label>
+                            <input type="number" id="contractLength" value="12" min="1" max="60" step="1">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="grossMargin">Gross Margin (%)</label>
+                            <input type="number" id="grossMargin" value="80" min="0" max="100" step="1">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="teamSize">Team Size</label>
+                            <input type="number" id="teamSize" value="10" min="1" max="1000" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">🔥</div>
+                        <div class="metric-label">Monthly Burn Rate</div>
+                        <div class="metric-value" id="burnRate">$0</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🚁</div>
+                        <div class="metric-label">Runway</div>
+                        <div class="metric-value" id="runway">0</div>
+                        <div class="metric-change" id="runwayStatus">months</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">📊</div>
+                        <div class="metric-label">Revenue per Employee</div>
+                        <div class="metric-value" id="revenuePerEmployee">$0</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">💎</div>
+                        <div class="metric-label">Net Revenue Retention</div>
+                        <div class="metric-value" id="nrr">0%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <div class="metric-label">Rule of 40 Score</div>
+                        <div class="metric-value" id="ruleOf40">0</div>
+                        <div class="metric-change" id="ruleOf40Status">Target: >40</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <div class="metric-label">Quick Ratio</div>
+                        <div class="metric-value" id="quickRatio">0</div>
+                        <div class="metric-change" id="quickRatioStatus">Target: >4</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Cohort Analysis</h3>
+                    </div>
+                    <canvas id="cohortChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Scenario Planning Tab -->
+            <div id="scenario-tab" class="tab-content">
+                <div class="scenario-container">
+                    <h2>Scenario Comparison <span class="feature-badge">PRO</span></h2>
+                    <div class="scenario-tabs">
+                        <div class="scenario-tab active" onclick="switchScenario('current')">Current</div>
+                        <div class="scenario-tab" onclick="switchScenario('optimistic')">Optimistic (+50% growth)</div>
+                        <div class="scenario-tab" onclick="switchScenario('pessimistic')">Pessimistic (-20% growth)</div>
+                        <div class="scenario-tab" onclick="switchScenario('custom')">Custom</div>
+                    </div>
+
+                    <div id="scenario-metrics" class="metrics-grid">
+                        <!-- Scenario metrics will be populated here -->
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Scenario Comparison Chart</h3>
+                    </div>
+                    <canvas id="scenarioChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Forecasting Tab -->
+            <div id="forecast-tab" class="tab-content">
+                <div class="input-section">
+                    <h2>Advanced Forecasting <span class="feature-badge">PRO</span></h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="forecastMonths">Forecast Period (months)</label>
+                            <input type="number" id="forecastMonths" value="24" min="6" max="60" step="6">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="seasonality">Seasonality Factor</label>
+                            <select id="seasonality">
+                                <option value="none">None</option>
+                                <option value="low">Low (±5%)</option>
+                                <option value="medium">Medium (±10%)</option>
+                                <option value="high">High (±20%)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confidence">Confidence Interval</label>
+                            <select id="confidence">
+                                <option value="80">80%</option>
+                                <option value="90">90%</option>
+                                <option value="95">95%</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="height: 500px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Long-term Forecast with Confidence Bands</h3>
+                    </div>
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports-tab" class="tab-content">
+                <div class="input-section">
+                    <h2>Executive Reports <span class="feature-badge">PRO</span></h2>
+                    <p style="margin-bottom: 20px; color: var(--gray);">Generate professional reports for investors, board meetings, and team reviews.</p>
+                    
+                    <div class="export-section">
+                        <button class="export-btn" onclick="exportPDF()">
+                            📄 Export PDF Report
+                        </button>
+                        <button class="export-btn" onclick="exportExcel()">
+                            📊 Export Excel Model
+                        </button>
+                        <button class="export-btn" onclick="exportPresentation()">
+                            📱 Export Slide Deck
+                        </button>
+                        <button class="export-btn" onclick="saveScenario()">
+                            💾 Save Scenario
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <h2>Report Preview</h2>
+                    <div id="reportPreview" style="padding: 20px; background: white; border-radius: 10px; min-height: 300px;">
+                        <!-- Report preview will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>SaaS Calculator Pro v2.0 | Licensed to <span id="licensedUser">User</span> | 
+            <a href="#" onclick="showSupport()" style="color: var(--primary);">Support</a> | 
+            <a href="#" onclick="resetLicense()" style="color: var(--gray);">Change License</a></p>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        let chart;
+        // Global variables
+        let charts = {};
+        let isLicensed = false;
+        let darkMode = false;
+        let currentScenario = 'current';
+        let scenarios = {
+            current: {},
+            optimistic: {},
+            pessimistic: {},
+            custom: {}
+        };
 
-        // Price slider sync
-        document.getElementById('priceSlider').addEventListener('input', function(e) {
-            document.getElementById('price').value = e.target.value;
+        // License validation functions
+        function calculateChecksum(keyBase) {
+            let sum = 0;
+            for (let i = 0; i < keyBase.length; i++) {
+                sum += keyBase.charCodeAt(i);
+            }
+            return (sum % 36).toString(36).toUpperCase();
+        }
+
+        function isValidLicenseKey(key) {
+            const pattern = /^SAAS-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}[A-Z0-9]$/;
+            if (!pattern.test(key)) return false;
+
+            const keyBase = key.slice(0, -1);
+            const providedChecksum = key.slice(-1);
+            const calculatedChecksum = calculateChecksum(keyBase);
+            
+            return providedChecksum === calculatedChecksum;
+        }
+
+        function validateLicense() {
+            const input = document.getElementById('licenseKeyInput');
+            const error = document.getElementById('licenseError');
+            const key = input.value.trim().toUpperCase();
+
+            if (!key) {
+                error.textContent = 'Please enter a license key';
+                return;
+            }
+
+            if (isValidLicenseKey(key)) {
+                isLicensed = true;
+                localStorage.setItem('saasCalcLicense', key);
+                document.getElementById('licenseModal').classList.add('hidden');
+                document.getElementById('licensedUser').textContent = `License ${key.slice(-8)}`;
+                error.textContent = '';
+                initializeCalculator();
+            } else {
+                error.textContent = '❌ Invalid license key. Please check and try again.';
+                input.style.borderColor = '#f56565';
+            }
+        }
+
+        function checkStoredLicense() {
+            const storedKey = localStorage.getItem('saasCalcLicense');
+            if (storedKey && isValidLicenseKey(storedKey)) {
+                isLicensed = true;
+                document.getElementById('licenseModal').classList.add('hidden');
+                document.getElementById('licensedUser').textContent = `License ${storedKey.slice(-8)}`;
+                return true;
+            }
+            return false;
+        }
+
+        function resetLicense() {
+            if (confirm('Reset license key and re-activate?')) {
+                localStorage.removeItem('saasCalcLicense');
+                location.reload();
+            }
+        }
+
+        // Dark mode toggle
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.mode-toggle').textContent = darkMode ? '☀️' : '🌙';
+            
+            // Update chart colors
+            Object.values(charts).forEach(chart => {
+                if (chart) {
+                    updateChartTheme(chart);
+                }
+            });
+        }
+
+        function updateChartTheme(chart) {
+            const textColor = darkMode ? '#e5e7eb' : '#374151';
+            const gridColor = darkMode ? '#4b5563' : '#e5e7eb';
+            
+            chart.options.plugins.legend.labels.color = textColor;
+            chart.options.scales.x.ticks.color = textColor;
+            chart.options.scales.y.ticks.color = textColor;
+            chart.options.scales.x.grid.color = gridColor;
+            chart.options.scales.y.grid.color = gridColor;
+            
+            chart.update();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Initialize charts if needed
+            if (tabName === 'advanced' && !charts.cohortChart) {
+                initializeCohortChart();
+            } else if (tabName === 'scenario' && !charts.scenarioChart) {
+                initializeScenarioChart();
+            } else if (tabName === 'forecast' && !charts.forecastChart) {
+                initializeForecastChart();
+            }
+        }
+
+        // Scenario switching
+        function switchScenario(scenario) {
+            currentScenario = scenario;
+            document.querySelectorAll('.scenario-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            calculateScenarios();
+        }
+
+        // Initialize calculator
+        function initializeCalculator() {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Initialize charts
+            initializeMainChart();
+            
+            // Calculate initial metrics
             calculateMetrics();
-        });
+        }
 
-        document.getElementById('price').addEventListener('input', function(e) {
-            document.getElementById('priceSlider').value = e.target.value;
-            calculateMetrics();
-        });
+        function setupEventListeners() {
+            // License key input formatting
+            const licenseInput = document.getElementById('licenseKeyInput');
+            licenseInput.addEventListener('input', function(e) {
+                let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                let formatted = '';
+                
+                if (value.length > 0) formatted += 'SAAS-';
+                if (value.length > 4) formatted += value.substr(4, 4) + '-';
+                if (value.length > 8) formatted += value.substr(8, 4) + '-';
+                if (value.length > 12) formatted += value.substr(12, 5);
+                else if (value.length > 8) formatted += value.substr(8);
+                else if (value.length > 4) formatted += value.substr(4);
+                
+                e.target.value = formatted.slice(0, 19);
+            });
 
-        // Add event listeners to all inputs
-        ['price', 'customers', 'growth', 'churn', 'costs', 'cac'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculateMetrics);
-        });
+            licenseInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    validateLicense();
+                }
+            });
 
+            // Price slider sync
+            document.getElementById('priceSlider').addEventListener('input', function(e) {
+                document.getElementById('price').value = e.target.value;
+                calculateMetrics();
+            });
+
+            document.getElementById('price').addEventListener('input', function(e) {
+                document.getElementById('priceSlider').value = e.target.value;
+                calculateMetrics();
+            });
+
+            // All input listeners
+            const inputs = ['price', 'customers', 'growth', 'churn', 'costs', 'cac', 
+                          'expansion', 'contractLength', 'grossMargin', 'teamSize'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', calculateMetrics);
+                }
+            });
+        }
+
+        // Main calculation function
         function calculateMetrics() {
+            if (!isLicensed && !checkStoredLicense()) {
+                return;
+            }
+
+            // Get values
             const price = parseFloat(document.getElementById('price').value) || 0;
             const customers = parseFloat(document.getElementById('customers').value) || 0;
             const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
@@ -377,115 +1241,270 @@
             const costs = parseFloat(document.getElementById('costs').value) || 0;
             const cac = parseFloat(document.getElementById('cac').value) || 0;
 
-            // Calculate MRR
+            // Basic metrics
             const mrr = customers * price;
             const arr = mrr * 12;
-
-            // Calculate net growth rate
             const netGrowth = growth - churn;
             const newCustomers = customers * growth;
             const acquisitionCosts = newCustomers * cac;
-
-            // Calculate profit
             const profit = mrr - costs - acquisitionCosts;
 
-            // Calculate LTV
-            const avgCustomerLifespan = churn > 0 ? 1 / churn : 24; // months
+            // LTV and related metrics
+            const avgCustomerLifespan = churn > 0 ? 1 / churn : 24;
             const ltv = price * avgCustomerLifespan;
+            const ltvcac = cac > 0 ? (ltv / cac) : 0;
+            const payback = cac > 0 ? (cac / price) : 0;
 
-            // Calculate LTV:CAC ratio
-            const ltvcac = cac > 0 ? (ltv / cac).toFixed(2) : 'N/A';
+            // Update basic metrics display
+            updateMetricDisplay('mrr', mrr, true);
+            updateMetricDisplay('arr', arr, true);
+            updateMetricDisplay('profit', profit, true);
+            updateMetricDisplay('ltv', ltv, true);
+            updateMetricDisplay('ltvcac', ltvcac, false, 'x');
+            updateMetricDisplay('payback', payback, false, ' mo');
 
-            // Calculate payback period
-            const payback = cac > 0 ? (cac / price).toFixed(1) : 'N/A';
+            // Update metric statuses
+            updateMetricStatus('ltvcacStatus', ltvcac >= 3 ? 'Healthy' : 'Needs Improvement', ltvcac >= 3);
+            updateMetricStatus('paybackStatus', payback <= 12 ? 'Good' : 'Too Long', payback <= 12);
 
-            // Calculate gross margin
-            const margin = mrr > 0 ? ((mrr - costs) / mrr * 100).toFixed(1) : 0;
-
-            // Update UI
-            document.getElementById('mrr').textContent = '$' + mrr.toLocaleString();
-            document.getElementById('arr').textContent = '$' + arr.toLocaleString();
-            document.getElementById('profit').textContent = '$' + profit.toLocaleString();
-            document.getElementById('ltv').textContent = '$' + Math.round(ltv).toLocaleString();
-            document.getElementById('ltvcac').textContent = ltvcac + 'x';
-            document.getElementById('payback').textContent = payback + ' mo';
-            document.getElementById('margin').textContent = margin + '%';
-
-            // Update profit indicator
-            const profitIndicator = document.getElementById('profitIndicator');
-            if (profit > 0) {
-                profitIndicator.textContent = 'Profitable';
-                profitIndicator.className = 'profit-indicator profit-positive';
-            } else {
-                profitIndicator.textContent = 'Not Profitable';
-                profitIndicator.className = 'profit-indicator profit-negative';
+            // Calculate advanced metrics if available
+            if (document.getElementById('expansion')) {
+                calculateAdvancedMetrics();
             }
 
-            // Update chart
-            updateGrowthChart(customers, netGrowth, price, costs, cac);
+            // Update charts
+            updateMainChart();
+            
+            // Store current scenario
+            scenarios.current = {
+                price, customers, growth, churn, costs, cac, mrr, arr, profit, ltv
+            };
         }
 
-        function updateGrowthChart(startCustomers, netGrowth, price, costs, cac) {
-            // Check if Chart.js is loaded
-            if (typeof Chart === 'undefined') {
-                console.log('Chart.js is still loading...');
-                return;
+        function calculateAdvancedMetrics() {
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+            const costs = parseFloat(document.getElementById('costs').value) || 0;
+            
+            const expansion = parseFloat(document.getElementById('expansion').value) / 100 || 0;
+            const grossMargin = parseFloat(document.getElementById('grossMargin').value) / 100 || 0;
+            const teamSize = parseFloat(document.getElementById('teamSize').value) || 1;
+
+            const mrr = customers * price;
+            const burnRate = costs - (mrr * grossMargin);
+            const runway = burnRate < 0 ? 'Profitable' : Math.round(100000 / burnRate); // Assuming $100k in bank
+            const revenuePerEmployee = mrr / teamSize;
+            const nrr = ((1 - churn + expansion) * 100);
+            const growthRate = growth * 100;
+            const ruleOf40 = growthRate + (grossMargin * 100);
+            const quickRatio = growth > 0 && churn > 0 ? (growth + expansion) / churn : 0;
+
+            // Update advanced metrics display
+            updateMetricDisplay('burnRate', Math.abs(burnRate), true);
+            document.getElementById('runway').textContent = typeof runway === 'string' ? runway : runway + ' mo';
+            updateMetricDisplay('revenuePerEmployee', revenuePerEmployee, true);
+            document.getElementById('nrr').textContent = nrr.toFixed(1) + '%';
+            document.getElementById('ruleOf40').textContent = ruleOf40.toFixed(0);
+            updateMetricStatus('ruleOf40Status', ruleOf40 >= 40 ? 'Excellent' : 'Needs Improvement', ruleOf40 >= 40);
+            document.getElementById('quickRatio').textContent = quickRatio.toFixed(1);
+            updateMetricStatus('quickRatioStatus', quickRatio >= 4 ? 'Excellent' : 'Needs Improvement', quickRatio >= 4);
+        }
+
+        function updateMetricDisplay(id, value, isCurrency = false, suffix = '') {
+            const element = document.getElementById(id);
+            if (element) {
+                if (isCurrency) {
+                    element.textContent = '$' + Math.round(value).toLocaleString();
+                } else {
+                    element.textContent = value.toFixed(1) + suffix;
+                }
             }
+        }
+
+        function updateMetricStatus(id, text, isPositive) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = text;
+                element.className = 'metric-change ' + (isPositive ? 'positive' : 'negative');
+            }
+        }
+
+        // Chart initialization and updates
+        function initializeMainChart() {
+            const ctx = document.getElementById('mainChart');
+            if (!ctx) return;
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        cornerRadius: 8,
+                        titleFont: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '$' + context.parsed.y.toLocaleString();
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            },
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            };
+
+            charts.mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: chartOptions
+            });
+        }
+
+        function updateMainChart() {
+            if (!charts.mainChart) return;
 
             const months = 12;
             const labels = [];
             const revenueData = [];
-            const customerData = [];
             const profitData = [];
+            const customerData = [];
 
-            let currentCustomers = startCustomers;
+            // Get current values
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            let customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+            const costs = parseFloat(document.getElementById('costs').value) || 0;
+            const cac = parseFloat(document.getElementById('cac').value) || 0;
+
+            const netGrowth = growth - churn;
 
             for (let i = 0; i < months; i++) {
                 labels.push(`Month ${i + 1}`);
                 
-                const revenue = currentCustomers * price;
-                const newCustomers = currentCustomers * (netGrowth > 0 ? netGrowth : 0);
+                const revenue = customers * price;
+                const newCustomers = customers * growth;
                 const acquisitionCosts = newCustomers * cac;
                 const profit = revenue - costs - acquisitionCosts;
 
-                revenueData.push(revenue);
-                customerData.push(currentCustomers);
-                profitData.push(profit);
+                revenueData.push(Math.round(revenue));
+                profitData.push(Math.round(profit));
+                customerData.push(Math.round(customers));
 
-                currentCustomers = currentCustomers * (1 + netGrowth);
+                customers = customers * (1 + netGrowth);
             }
 
-            const ctx = document.getElementById('growthChart').getContext('2d');
-            
-            if (!ctx) {
-                console.error('Canvas context not found');
-                return;
-            }
-
-            if (chart) {
-                chart.destroy();
-            }
-
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Revenue',
-                        data: revenueData,
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Profit',
-                        data: profitData,
-                        borderColor: '#48bb78',
-                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
+            charts.mainChart.data.labels = labels;
+            charts.mainChart.data.datasets = [
+                {
+                    label: 'Revenue',
+                    data: revenueData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 },
+                {
+                    label: 'Profit',
+                    data: profitData,
+                    borderColor: '#48bb78',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ];
+
+            charts.mainChart.update();
+        }
+
+        function updateChart(type) {
+            // Update active button
+            document.querySelectorAll('.chart-control').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update chart based on type
+            if (type === 'customers') {
+                // Show customer growth chart
+                updateCustomerChart();
+            } else if (type === 'profit') {
+                // Show profit chart
+                updateProfitChart();
+            } else {
+                // Default to revenue
+                updateMainChart();
+            }
+        }
+
+        function initializeCohortChart() {
+            const ctx = document.getElementById('cohortChart');
+            if (!ctx) return;
+
+            // Cohort retention data (sample)
+            const cohortData = generateCohortData();
+
+            charts.cohortChart = new Chart(ctx, {
+                type: 'bar',
+                data: cohortData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -494,9 +1513,80 @@
                             display: true,
                             position: 'top'
                         },
-                        title: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateCohortData() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const cohorts = ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'];
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0.05;
+
+            const datasets = cohorts.map((cohort, index) => {
+                const data = months.map((month, monthIndex) => {
+                    if (monthIndex < index) return 0;
+                    return Math.round(100 * Math.pow(1 - churn, monthIndex - index));
+                });
+
+                return {
+                    label: cohort,
+                    data: data,
+                    backgroundColor: `rgba(102, 126, 234, ${0.8 - index * 0.1})`,
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                };
+            });
+
+            return {
+                labels: months,
+                datasets: datasets
+            };
+        }
+
+        function initializeScenarioChart() {
+            const ctx = document.getElementById('scenarioChart');
+            if (!ctx) return;
+
+            charts.scenarioChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
                             display: true,
-                            text: '12-Month Revenue Projection'
+                            position: 'top'
                         }
                     },
                     scales: {
@@ -511,96 +1601,362 @@
                     }
                 }
             });
+
+            calculateScenarios();
         }
 
-        function exportResults() {
-            const price = document.getElementById('price').value;
-            const customers = document.getElementById('customers').value;
-            const growth = document.getElementById('growth').value;
-            const churn = document.getElementById('churn').value;
-            const costs = document.getElementById('costs').value;
-            const cac = document.getElementById('cac').value;
+        function calculateScenarios() {
+            // Get current values
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+            const costs = parseFloat(document.getElementById('costs').value) || 0;
 
-            const mrr = document.getElementById('mrr').textContent;
-            const arr = document.getElementById('arr').textContent;
-            const profit = document.getElementById('profit').textContent;
-            const ltv = document.getElementById('ltv').textContent;
-            const ltvcac = document.getElementById('ltvcac').textContent;
-            const payback = document.getElementById('payback').textContent;
-            const margin = document.getElementById('margin').textContent;
+            // Calculate scenarios
+            const scenarioData = {
+                current: calculateScenarioProjection(price, customers, growth, churn, costs, 0),
+                optimistic: calculateScenarioProjection(price, customers, growth * 1.5, churn * 0.8, costs, 0.2),
+                pessimistic: calculateScenarioProjection(price, customers, growth * 0.5, churn * 1.2, costs, -0.1),
+                custom: calculateScenarioProjection(price, customers, growth, churn, costs, 0)
+            };
 
-            const report = `SaaS FINANCIAL REPORT
-Generated: ${new Date().toLocaleDateString()}
+            // Update scenario chart
+            if (charts.scenarioChart) {
+                const months = 12;
+                const labels = Array.from({length: months}, (_, i) => `Month ${i + 1}`);
 
-BUSINESS PARAMETERS
-==================
-Monthly Price: $${price}
-Starting Customers: ${customers}
-Monthly Growth Rate: ${growth}%
-Monthly Churn Rate: ${churn}%
-Operating Costs: $${costs}
-Customer Acquisition Cost: $${cac}
+                charts.scenarioChart.data.labels = labels;
+                charts.scenarioChart.data.datasets = [
+                    {
+                        label: 'Current',
+                        data: scenarioData.current.revenue,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Optimistic',
+                        data: scenarioData.optimistic.revenue,
+                        borderColor: '#48bb78',
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Pessimistic',
+                        data: scenarioData.pessimistic.revenue,
+                        borderColor: '#f56565',
+                        backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                        tension: 0.4
+                    }
+                ];
 
-KEY METRICS
-===========
-Monthly Recurring Revenue (MRR): ${mrr}
-Annual Recurring Revenue (ARR): ${arr}
-Monthly Profit: ${profit}
-Customer Lifetime Value: ${ltv}
-LTV:CAC Ratio: ${ltvcac}
-Payback Period: ${payback}
-Gross Margin: ${margin}
+                charts.scenarioChart.update();
+            }
 
-RECOMMENDATIONS
-===============
-${generateRecommendations(parseFloat(churn), parseFloat(growth), parseFloat(ltvcac.replace('x', '')))}
+            // Update scenario metrics display
+            updateScenarioMetrics(scenarioData[currentScenario]);
+        }
 
-This report was generated by SaaS Calculator Pro
-For questions: support@saascalculator.com`;
+        function calculateScenarioProjection(price, customers, growth, churn, costs, adjustment) {
+            const months = 12;
+            const revenue = [];
+            const profit = [];
+            let currentCustomers = customers;
 
-            // Create download
-            const blob = new Blob([report], { type: 'text/plain' });
+            for (let i = 0; i < months; i++) {
+                const monthlyRevenue = currentCustomers * price * (1 + adjustment);
+                const monthlyProfit = monthlyRevenue - costs;
+                
+                revenue.push(Math.round(monthlyRevenue));
+                profit.push(Math.round(monthlyProfit));
+                
+                currentCustomers = currentCustomers * (1 + growth - churn);
+            }
+
+            return {
+                revenue,
+                profit,
+                finalMRR: revenue[revenue.length - 1],
+                finalCustomers: Math.round(currentCustomers),
+                totalRevenue: revenue.reduce((a, b) => a + b, 0)
+            };
+        }
+
+        function updateScenarioMetrics(scenario) {
+            const metricsHtml = `
+                <div class="metric-card">
+                    <div class="metric-label">12-Month MRR</div>
+                    <div class="metric-value">$${scenario.finalMRR.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Revenue</div>
+                    <div class="metric-value">$${scenario.totalRevenue.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Final Customers</div>
+                    <div class="metric-value">${scenario.finalCustomers.toLocaleString()}</div>
+                </div>
+            `;
+            
+            document.getElementById('scenario-metrics').innerHTML = metricsHtml;
+        }
+
+        function initializeForecastChart() {
+            const ctx = document.getElementById('forecastChart');
+            if (!ctx) return;
+
+            charts.forecastChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateForecast();
+        }
+
+        function updateForecast() {
+            const months = parseInt(document.getElementById('forecastMonths').value) || 24;
+            const seasonality = document.getElementById('seasonality').value;
+            const confidence = parseInt(document.getElementById('confidence').value) / 100;
+
+            // Generate forecast data with confidence intervals
+            const forecastData = generateForecastData(months, seasonality, confidence);
+
+            if (charts.forecastChart) {
+                charts.forecastChart.data = forecastData;
+                charts.forecastChart.update();
+            }
+        }
+
+        function generateForecastData(months, seasonality, confidence) {
+            const labels = Array.from({length: months}, (_, i) => `Month ${i + 1}`);
+            const baseData = [];
+            const upperBound = [];
+            const lowerBound = [];
+
+            // Get current values
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            let customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+
+            const netGrowth = growth - churn;
+            const variability = seasonality === 'high' ? 0.2 : seasonality === 'medium' ? 0.1 : seasonality === 'low' ? 0.05 : 0;
+
+            for (let i = 0; i < months; i++) {
+                const baseRevenue = customers * price;
+                const seasonalFactor = 1 + (variability * Math.sin((i / 12) * 2 * Math.PI));
+                const revenue = baseRevenue * seasonalFactor;
+                
+                baseData.push(Math.round(revenue));
+                upperBound.push(Math.round(revenue * (1 + (1 - confidence))));
+                lowerBound.push(Math.round(revenue * (1 - (1 - confidence))));
+                
+                customers = customers * (1 + netGrowth);
+            }
+
+            return {
+                labels,
+                datasets: [
+                    {
+                        label: 'Forecast',
+                        data: baseData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    },
+                    {
+                        label: 'Upper Bound',
+                        data: upperBound,
+                        borderColor: '#48bb78',
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: '+1'
+                    },
+                    {
+                        label: 'Lower Bound',
+                        data: lowerBound,
+                        borderColor: '#f56565',
+                        backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: false
+                    }
+                ]
+            };
+        }
+
+        // Export functions
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Title
+            doc.setFontSize(20);
+            doc.text('SaaS Financial Report', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 30);
+            
+            // Metrics
+            doc.setFontSize(16);
+            doc.text('Key Metrics', 20, 50);
+            
+            doc.setFontSize(12);
+            const metrics = [
+                `MRR: ${document.getElementById('mrr').textContent}`,
+                `ARR: ${document.getElementById('arr').textContent}`,
+                `Monthly Profit: ${document.getElementById('profit').textContent}`,
+                `Customer LTV: ${document.getElementById('ltv').textContent}`,
+                `LTV:CAC Ratio: ${document.getElementById('ltvcac').textContent}`,
+                `CAC Payback: ${document.getElementById('payback').textContent}`
+            ];
+            
+            metrics.forEach((metric, index) => {
+                doc.text(metric, 20, 65 + (index * 10));
+            });
+            
+            // Save
+            doc.save('saas-financial-report.pdf');
+            
+            showNotification('PDF report exported successfully!');
+        }
+
+        function exportExcel() {
+            // In a real implementation, this would use a library like SheetJS
+            // For now, we'll create a CSV
+            const headers = ['Metric', 'Value'];
+            const data = [
+                ['MRR', document.getElementById('mrr').textContent],
+                ['ARR', document.getElementById('arr').textContent],
+                ['Monthly Profit', document.getElementById('profit').textContent],
+                ['Customer LTV', document.getElementById('ltv').textContent],
+                ['LTV:CAC Ratio', document.getElementById('ltvcac').textContent],
+                ['CAC Payback Period', document.getElementById('payback').textContent]
+            ];
+            
+            let csv = headers.join(',') + '\n';
+            data.forEach(row => {
+                csv += row.join(',') + '\n';
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `SaaS_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            a.download = 'saas-metrics.csv';
             a.click();
+            
+            showNotification('Excel file exported successfully!');
         }
 
-        function generateRecommendations(churn, growth, ltvcacRatio) {
-            let recommendations = [];
-
-            if (churn > 10) {
-                recommendations.push('• High churn rate detected. Focus on customer retention strategies.');
-            }
-            if (growth < 5) {
-                recommendations.push('• Growth rate below industry average. Consider increasing marketing spend.');
-            }
-            if (ltvcacRatio < 3) {
-                recommendations.push('• LTV:CAC ratio is low. Work on reducing acquisition costs or increasing customer value.');
-            }
-            if (ltvcacRatio > 5) {
-                recommendations.push('• Excellent LTV:CAC ratio! Consider scaling up customer acquisition.');
-            }
-
-            return recommendations.length > 0 ? recommendations.join('\n') : '• Your metrics look healthy. Keep monitoring and optimizing.';
+        function exportPresentation() {
+            // Generate a simple HTML presentation
+            const presentationHtml = `
+                <h1>SaaS Metrics Presentation</h1>
+                <h2>Key Performance Indicators</h2>
+                <ul>
+                    <li>MRR: ${document.getElementById('mrr').textContent}</li>
+                    <li>ARR: ${document.getElementById('arr').textContent}</li>
+                    <li>Customer LTV: ${document.getElementById('ltv').textContent}</li>
+                </ul>
+                <p>Generated with SaaS Calculator Pro</p>
+            `;
+            
+            const blob = new Blob([presentationHtml], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'saas-presentation.html';
+            a.click();
+            
+            showNotification('Presentation exported successfully!');
         }
 
-        // Initialize on load when Chart.js is ready
-        window.onload = function() {
-            if (typeof Chart !== 'undefined') {
-                calculateMetrics();
-            } else {
-                // Fallback: try again after a short delay
-                setTimeout(function() {
-                    if (typeof Chart !== 'undefined') {
-                        calculateMetrics();
-                    } else {
-                        console.error('Chart.js failed to load. Please check your internet connection.');
-                        // Still calculate metrics without chart
-                        calculateMetrics();
+        function saveScenario() {
+            const scenarioName = prompt('Enter scenario name:');
+            if (scenarioName) {
+                const scenario = {
+                    name: scenarioName,
+                    date: new Date().toISOString(),
+                    metrics: {
+                        price: document.getElementById('price').value,
+                        customers: document.getElementById('customers').value,
+                        growth: document.getElementById('growth').value,
+                        churn: document.getElementById('churn').value,
+                        costs: document.getElementById('costs').value,
+                        cac: document.getElementById('cac').value
                     }
-                }, 500);
+                };
+                
+                // Save to localStorage
+                const savedScenarios = JSON.parse(localStorage.getItem('saasScenarios') || '[]');
+                savedScenarios.push(scenario);
+                localStorage.setItem('saasScenarios', JSON.stringify(savedScenarios));
+                
+                showNotification('Scenario saved successfully!');
+            }
+        }
+
+        function showNotification(message) {
+            // Simple notification
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #48bb78;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function showSupport() {
+            alert('Support: support@sascalcpro.com\nDocumentation: docs.sascalcpro.com');
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            if (!checkStoredLicense()) {
+                document.getElementById('licenseModal').classList.remove('hidden');
+            } else {
+                initializeCalculator();
             }
         };
     </script>
