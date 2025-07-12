@@ -733,11 +733,11 @@
         <div class="license-content">
             <h2>🔐 Activate SaaS Calculator Pro</h2>
             <p>Enter your license key to unlock all features and start analyzing your SaaS metrics with the most advanced calculator available.</p>
+            
             <input type="text" 
                    class="license-input" 
                    id="licenseKeyInput" 
-                   placeholder="SAAS-XXXX-XXXX-XXXX"
-                   maxlength="19"
+                   placeholder="SAAS-XXXX-XXXX-XXXXX"
                    autocomplete="off">
             <button class="license-button" onclick="validateLicense()">Activate Calculator</button>
             <div class="license-error" id="licenseError"></div>
@@ -758,11 +758,11 @@
 
         <!-- Navigation Tabs -->
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('basic')">📊 Basic Metrics</div>
-            <div class="tab" onclick="switchTab('advanced')">🚀 Advanced Analytics</div>
-            <div class="tab" onclick="switchTab('scenario')">🔮 Scenario Planning</div>
-            <div class="tab" onclick="switchTab('forecast')">📈 Forecasting</div>
-            <div class="tab" onclick="switchTab('reports')">📑 Reports</div>
+            <div class="tab active" onclick="switchTab(event, 'basic')">📊 Basic Metrics</div>
+            <div class="tab" onclick="switchTab(event, 'advanced')">🚀 Advanced Analytics</div>
+            <div class="tab" onclick="switchTab(event, 'scenario')">🔮 Scenario Planning</div>
+            <div class="tab" onclick="switchTab(event, 'forecast')">📈 Forecasting</div>
+            <div class="tab" onclick="switchTab(event, 'reports')">📑 Reports</div>
         </div>
 
         <div class="content">
@@ -945,10 +945,10 @@
                 <div class="scenario-container">
                     <h2>Scenario Comparison <span class="feature-badge">PRO</span></h2>
                     <div class="scenario-tabs">
-                        <div class="scenario-tab active" onclick="switchScenario('current')">Current</div>
-                        <div class="scenario-tab" onclick="switchScenario('optimistic')">Optimistic (+50% growth)</div>
-                        <div class="scenario-tab" onclick="switchScenario('pessimistic')">Pessimistic (-20% growth)</div>
-                        <div class="scenario-tab" onclick="switchScenario('custom')">Custom</div>
+                        <div class="scenario-tab active" onclick="switchScenario(event, 'current')">Current</div>
+                        <div class="scenario-tab" onclick="switchScenario(event, 'optimistic')">Optimistic (+50% growth)</div>
+                        <div class="scenario-tab" onclick="switchScenario(event, 'pessimistic')">Pessimistic (-20% growth)</div>
+                        <div class="scenario-tab" onclick="switchScenario(event, 'custom')">Custom</div>
                     </div>
 
                     <div id="scenario-metrics" class="metrics-grid">
@@ -1056,24 +1056,37 @@
             custom: {}
         };
 
-        // License validation functions
+        // NO PUBLIC TEST KEYS - Only validate real purchased keys
+        const VALID_TEST_KEYS = [];
+
+        // FIXED: Simplified license validation
+        function isValidLicenseKey(key) {
+            // Remove any spaces and convert to uppercase
+            key = key.trim().toUpperCase();
+            
+            // Check if it's a test key
+            if (VALID_TEST_KEYS.includes(key)) {
+                return true;
+            }
+            
+            // Check format
+            const pattern = /^SAAS-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}[A-Z0-9]$/;
+            if (!pattern.test(key)) return false;
+            
+            // For production keys, validate checksum
+            const keyBase = key.slice(0, -1);
+            const providedChecksum = key.slice(-1);
+            const calculatedChecksum = calculateChecksum(keyBase);
+            
+            return providedChecksum === calculatedChecksum;
+        }
+
         function calculateChecksum(keyBase) {
             let sum = 0;
             for (let i = 0; i < keyBase.length; i++) {
                 sum += keyBase.charCodeAt(i);
             }
             return (sum % 36).toString(36).toUpperCase();
-        }
-
-        function isValidLicenseKey(key) {
-            const pattern = /^SAAS-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}[A-Z0-9]$/;
-            if (!pattern.test(key)) return false;
-
-            const keyBase = key.slice(0, -1);
-            const providedChecksum = key.slice(-1);
-            const calculatedChecksum = calculateChecksum(keyBase);
-            
-            return providedChecksum === calculatedChecksum;
         }
 
         function validateLicense() {
@@ -1087,6 +1100,7 @@
             }
 
             if (isValidLicenseKey(key)) {
+                // Valid license
                 isLicensed = true;
                 localStorage.setItem('saasCalcLicense', key);
                 document.getElementById('licenseModal').classList.add('hidden');
@@ -1094,7 +1108,8 @@
                 error.textContent = '';
                 initializeCalculator();
             } else {
-                error.textContent = '❌ Invalid license key. Please check and try again.';
+                // Invalid license
+                error.textContent = '❌ Invalid license key. Please check your purchase email.';
                 input.style.borderColor = '#f56565';
             }
         }
@@ -1144,8 +1159,8 @@
             chart.update();
         }
 
-        // Tab switching
-        function switchTab(tabName) {
+        // Tab switching - FIXED
+        function switchTab(event, tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
@@ -1162,8 +1177,8 @@
             }
         }
 
-        // Scenario switching
-        function switchScenario(scenario) {
+        // Scenario switching - FIXED
+        function switchScenario(event, scenario) {
             currentScenario = scenario;
             document.querySelectorAll('.scenario-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
@@ -1183,22 +1198,8 @@
         }
 
         function setupEventListeners() {
-            // License key input formatting
+            // FIXED: License key input - no auto-formatting
             const licenseInput = document.getElementById('licenseKeyInput');
-            licenseInput.addEventListener('input', function(e) {
-                let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                let formatted = '';
-                
-                if (value.length > 0) formatted += 'SAAS-';
-                if (value.length > 4) formatted += value.substr(4, 4) + '-';
-                if (value.length > 8) formatted += value.substr(8, 4) + '-';
-                if (value.length > 12) formatted += value.substr(12, 5);
-                else if (value.length > 8) formatted += value.substr(8);
-                else if (value.length > 4) formatted += value.substr(4);
-                
-                e.target.value = formatted.slice(0, 19);
-            });
-
             licenseInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     validateLicense();
@@ -1493,6 +1494,41 @@
                 // Default to revenue
                 updateMainChart();
             }
+        }
+
+        function updateCustomerChart() {
+            if (!charts.mainChart) return;
+
+            const months = 12;
+            const labels = [];
+            const customerData = [];
+
+            let customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+            const netGrowth = growth - churn;
+
+            for (let i = 0; i < months; i++) {
+                labels.push(`Month ${i + 1}`);
+                customerData.push(Math.round(customers));
+                customers = customers * (1 + netGrowth);
+            }
+
+            charts.mainChart.data.labels = labels;
+            charts.mainChart.data.datasets = [
+                {
+                    label: 'Total Customers',
+                    data: customerData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ];
+
+            charts.mainChart.update();
         }
 
         function initializeCohortChart() {
