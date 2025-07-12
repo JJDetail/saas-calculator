@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Pricing & Revenue Calculator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .results-section {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .slider-container {
+            margin-top: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+            height: 300px;
+            position: relative;
+        }
+
+        .growth-chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .profit-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .profit-positive {
+            background: #48bb78;
+            color: white;
+        }
+
+        .profit-negative {
+            background: #f56565;
+            color: white;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .formula-info {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #4a5568;
+        }
+
+        .advanced-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-card {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 SaaS Pricing & Revenue Calculator Pro</h1>
+            <p>Advanced Financial Modeling for Subscription Businesses</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <h2>📊 Business Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="price">Monthly Subscription Price ($)</label>
+                    <input type="number" id="price" value="49" min="1" step="1">
+                    <div class="slider-container">
+                        <input type="range" id="priceSlider" min="10" max="500" value="49">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="customers">Starting Customers</label>
+                    <input type="number" id="customers" value="100" min="0" step="10">
+                </div>
+
+                <div class="input-group">
+                    <label for="growth">Monthly Growth Rate (%)</label>
+                    <input type="number" id="growth" value="10" min="-50" max="100" step="1">
+                    <div class="formula-info">
+                        📈 Industry average: 5-15% for early-stage SaaS
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="churn">Monthly Churn Rate (%)</label>
+                    <input type="number" id="churn" value="5" min="0" max="50" step="0.5">
+                    <div class="formula-info">
+                        📉 Good: <3% | Average: 5-7% | Poor: >10%
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="costs">Monthly Operating Costs ($)</label>
+                    <input type="number" id="costs" value="5000" min="0" step="100">
+                </div>
+
+                <div class="input-group">
+                    <label for="cac">Customer Acquisition Cost ($)</label>
+                    <input type="number" id="cac" value="150" min="0" step="10">
+                    <div class="formula-info">
+                        💡 Should be < 3x monthly price for healthy unit economics
+                    </div>
+                </div>
+
+                <button class="export-btn" onclick="exportResults()">📥 Export Financial Report</button>
+            </div>
+
+            <div class="results-section">
+                <h2>💰 Financial Projections</h2>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Recurring Revenue (MRR)</div>
+                    <div class="metric-value" id="mrr">$0</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Annual Recurring Revenue (ARR)</div>
+                    <div class="metric-value" id="arr">$0</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">
+                        Monthly Profit
+                        <span id="profitIndicator" class="profit-indicator"></span>
+                    </div>
+                    <div class="metric-value" id="profit">$0</div>
+                </div>
+
+                <div class="advanced-metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">LTV:CAC Ratio</div>
+                        <div class="metric-value" id="ltvcac">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Payback Period</div>
+                        <div class="metric-value" id="payback">0</div>
+                    </div>
+                </div>
+
+                <div class="advanced-metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Customer Lifetime Value</div>
+                        <div class="metric-value" id="ltv">$0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Gross Margin</div>
+                        <div class="metric-value" id="margin">0%</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="growthChart" class="growth-chart"></canvas>
+                    <div id="chartLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #718096; display: none;">Loading chart...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <script>
+        let chart;
+
+        // Price slider sync
+        document.getElementById('priceSlider').addEventListener('input', function(e) {
+            document.getElementById('price').value = e.target.value;
+            calculateMetrics();
+        });
+
+        document.getElementById('price').addEventListener('input', function(e) {
+            document.getElementById('priceSlider').value = e.target.value;
+            calculateMetrics();
+        });
+
+        // Add event listeners to all inputs
+        ['price', 'customers', 'growth', 'churn', 'costs', 'cac'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateMetrics);
+        });
+
+        function calculateMetrics() {
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const customers = parseFloat(document.getElementById('customers').value) || 0;
+            const growth = parseFloat(document.getElementById('growth').value) / 100 || 0;
+            const churn = parseFloat(document.getElementById('churn').value) / 100 || 0;
+            const costs = parseFloat(document.getElementById('costs').value) || 0;
+            const cac = parseFloat(document.getElementById('cac').value) || 0;
+
+            // Calculate MRR
+            const mrr = customers * price;
+            const arr = mrr * 12;
+
+            // Calculate net growth rate
+            const netGrowth = growth - churn;
+            const newCustomers = customers * growth;
+            const acquisitionCosts = newCustomers * cac;
+
+            // Calculate profit
+            const profit = mrr - costs - acquisitionCosts;
+
+            // Calculate LTV
+            const avgCustomerLifespan = churn > 0 ? 1 / churn : 24; // months
+            const ltv = price * avgCustomerLifespan;
+
+            // Calculate LTV:CAC ratio
+            const ltvcac = cac > 0 ? (ltv / cac).toFixed(2) : 'N/A';
+
+            // Calculate payback period
+            const payback = cac > 0 ? (cac / price).toFixed(1) : 'N/A';
+
+            // Calculate gross margin
+            const margin = mrr > 0 ? ((mrr - costs) / mrr * 100).toFixed(1) : 0;
+
+            // Update UI
+            document.getElementById('mrr').textContent = '$' + mrr.toLocaleString();
+            document.getElementById('arr').textContent = '$' + arr.toLocaleString();
+            document.getElementById('profit').textContent = '$' + profit.toLocaleString();
+            document.getElementById('ltv').textContent = '$' + Math.round(ltv).toLocaleString();
+            document.getElementById('ltvcac').textContent = ltvcac + 'x';
+            document.getElementById('payback').textContent = payback + ' mo';
+            document.getElementById('margin').textContent = margin + '%';
+
+            // Update profit indicator
+            const profitIndicator = document.getElementById('profitIndicator');
+            if (profit > 0) {
+                profitIndicator.textContent = 'Profitable';
+                profitIndicator.className = 'profit-indicator profit-positive';
+            } else {
+                profitIndicator.textContent = 'Not Profitable';
+                profitIndicator.className = 'profit-indicator profit-negative';
+            }
+
+            // Update chart
+            updateGrowthChart(customers, netGrowth, price, costs, cac);
+        }
+
+        function updateGrowthChart(startCustomers, netGrowth, price, costs, cac) {
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.log('Chart.js is still loading...');
+                return;
+            }
+
+            const months = 12;
+            const labels = [];
+            const revenueData = [];
+            const customerData = [];
+            const profitData = [];
+
+            let currentCustomers = startCustomers;
+
+            for (let i = 0; i < months; i++) {
+                labels.push(`Month ${i + 1}`);
+                
+                const revenue = currentCustomers * price;
+                const newCustomers = currentCustomers * (netGrowth > 0 ? netGrowth : 0);
+                const acquisitionCosts = newCustomers * cac;
+                const profit = revenue - costs - acquisitionCosts;
+
+                revenueData.push(revenue);
+                customerData.push(currentCustomers);
+                profitData.push(profit);
+
+                currentCustomers = currentCustomers * (1 + netGrowth);
+            }
+
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            if (!ctx) {
+                console.error('Canvas context not found');
+                return;
+            }
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: revenueData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Profit',
+                        data: profitData,
+                        borderColor: '#48bb78',
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: '12-Month Revenue Projection'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportResults() {
+            const price = document.getElementById('price').value;
+            const customers = document.getElementById('customers').value;
+            const growth = document.getElementById('growth').value;
+            const churn = document.getElementById('churn').value;
+            const costs = document.getElementById('costs').value;
+            const cac = document.getElementById('cac').value;
+
+            const mrr = document.getElementById('mrr').textContent;
+            const arr = document.getElementById('arr').textContent;
+            const profit = document.getElementById('profit').textContent;
+            const ltv = document.getElementById('ltv').textContent;
+            const ltvcac = document.getElementById('ltvcac').textContent;
+            const payback = document.getElementById('payback').textContent;
+            const margin = document.getElementById('margin').textContent;
+
+            const report = `SaaS FINANCIAL REPORT
+Generated: ${new Date().toLocaleDateString()}
+
+BUSINESS PARAMETERS
+==================
+Monthly Price: $${price}
+Starting Customers: ${customers}
+Monthly Growth Rate: ${growth}%
+Monthly Churn Rate: ${churn}%
+Operating Costs: $${costs}
+Customer Acquisition Cost: $${cac}
+
+KEY METRICS
+===========
+Monthly Recurring Revenue (MRR): ${mrr}
+Annual Recurring Revenue (ARR): ${arr}
+Monthly Profit: ${profit}
+Customer Lifetime Value: ${ltv}
+LTV:CAC Ratio: ${ltvcac}
+Payback Period: ${payback}
+Gross Margin: ${margin}
+
+RECOMMENDATIONS
+===============
+${generateRecommendations(parseFloat(churn), parseFloat(growth), parseFloat(ltvcac.replace('x', '')))}
+
+This report was generated by SaaS Calculator Pro
+For questions: support@saascalculator.com`;
+
+            // Create download
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SaaS_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+        }
+
+        function generateRecommendations(churn, growth, ltvcacRatio) {
+            let recommendations = [];
+
+            if (churn > 10) {
+                recommendations.push('• High churn rate detected. Focus on customer retention strategies.');
+            }
+            if (growth < 5) {
+                recommendations.push('• Growth rate below industry average. Consider increasing marketing spend.');
+            }
+            if (ltvcacRatio < 3) {
+                recommendations.push('• LTV:CAC ratio is low. Work on reducing acquisition costs or increasing customer value.');
+            }
+            if (ltvcacRatio > 5) {
+                recommendations.push('• Excellent LTV:CAC ratio! Consider scaling up customer acquisition.');
+            }
+
+            return recommendations.length > 0 ? recommendations.join('\n') : '• Your metrics look healthy. Keep monitoring and optimizing.';
+        }
+
+        // Initialize on load when Chart.js is ready
+        window.onload = function() {
+            if (typeof Chart !== 'undefined') {
+                calculateMetrics();
+            } else {
+                // Fallback: try again after a short delay
+                setTimeout(function() {
+                    if (typeof Chart !== 'undefined') {
+                        calculateMetrics();
+                    } else {
+                        console.error('Chart.js failed to load. Please check your internet connection.');
+                        // Still calculate metrics without chart
+                        calculateMetrics();
+                    }
+                }, 500);
+            }
+        };
+    </script>
+</body>
+</html>
