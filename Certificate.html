@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Calculator Pro Certificate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .certificate {
+            width: 800px;
+            height: 600px;
+            background: white;
+            border: 20px solid #2c3e50;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            padding: 60px;
+            text-align: center;
+        }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 3px solid #667eea;
+            pointer-events: none;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: normal;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .recipient {
+            margin: 40px 0;
+        }
+
+        .recipient-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .recipient-name {
+            font-size: 32px;
+            color: #2c3e50;
+            font-weight: bold;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+            padding: 0 20px 5px;
+            min-width: 300px;
+        }
+
+        .description {
+            font-size: 18px;
+            color: #34495e;
+            line-height: 1.6;
+            margin: 30px auto;
+            max-width: 600px;
+        }
+
+        .features {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            font-size: 14px;
+            color: #667eea;
+        }
+
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .signature {
+            text-align: center;
+            flex: 1;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-bottom: 1px solid #bdc3c7;
+            margin: 0 auto 5px;
+            height: 30px;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        .signature-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #7f8c8d;
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+        }
+
+        .seal {
+            position: absolute;
+            bottom: 60px;
+            right: 60px;
+            width: 80px;
+            height: 80px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            box-shadow: 0 0 0 3px white, 0 0 0 6px #667eea;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .certificate {
+                box-shadow: none;
+            }
+        }
+
+        .editable {
+            cursor: text;
+            transition: background 0.3s;
+        }
+
+        .editable:hover {
+            background: #f0f0f0;
+        }
+
+        .download-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 850px) {
+            .certificate {
+                transform: scale(0.8);
+                margin: -80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="header">
+            <div class="logo">SAASCALCPRO.COM</div>
+            <h1 class="title">CERTIFICATE OF OWNERSHIP</h1>
+            <p class="subtitle">Professional License</p>
+        </div>
+
+        <div class="recipient">
+            <p class="recipient-label">This certifies that</p>
+            <div class="recipient-name editable" contenteditable="true" onclick="this.focus(); this.select();">Your Name Here</div>
+        </div>
+
+        <div class="description">
+            is a licensed owner of <strong>SaaS Calculator Pro</strong> with full access to all features including MRR/ARR calculations, LTV analysis, growth projections, and export capabilities.
+        </div>
+
+        <div class="features">
+            <div class="feature">✓ Lifetime Updates</div>
+            <div class="feature">✓ Commercial Use</div>
+            <div class="feature">✓ Priority Support</div>
+        </div>
+
+        <div class="signature-section">
+            <div class="signature">
+                <div class="signature-line">SaaSCalcPro</div>
+                <p class="signature-label">Authorized Signature</p>
+            </div>
+            <div class="signature">
+                <div class="signature-line editable" contenteditable="true">License #0001</div>
+                <p class="signature-label">License Number</p>
+            </div>
+        </div>
+
+        <div class="seal">
+            PRO<br>LICENSE
+        </div>
+
+        <div class="date" id="currentDate"></div>
+    </div>
+
+    <button class="download-btn" onclick="downloadCertificate()">Download Certificate</button>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Download function
+        function downloadCertificate() {
+            // Hide download button
+            document.querySelector('.download-btn').style.display = 'none';
+            
+            // Trigger print dialog
+            window.print();
+            
+            // Show button again
+            setTimeout(() => {
+                document.querySelector('.download-btn').style.display = 'block';
+            }, 1000);
+        }
+
+        // Auto-generate license number
+        const licenseNum = 'PRO-' + Date.now().toString().slice(-6);
+        document.querySelector('.signature-line.editable').textContent = licenseNum;
+    </script>
+</body>
+</html>
